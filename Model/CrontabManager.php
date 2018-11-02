@@ -205,11 +205,10 @@ class CrontabManager
      */
     private function prepareContent()
     {
-        $output = '';
-        foreach ($this->lines as $line) {
-            $output .= $line[self::KEY_CONTENT] . PHP_EOL;
-        }
-        return $output;
+        return implode(
+            PHP_EOL,
+            array_column($this->lines, self::KEY_CONTENT)
+        );
     }
 
     /**
