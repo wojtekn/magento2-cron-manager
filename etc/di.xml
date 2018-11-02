@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!--
+  Copyright Wojtek Naruniec (c) 2018
+  See LICENSE.txt for license details.
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="cron_manager_enable" xsi:type="object">Wojtekn\CronManager\Console\Command\CronEnablerCommand</item>
+                <item name="cron_manager_disable" xsi:type="object">Wojtekn\CronManager\Console\Command\CronDisablerCommand</item>
+            </argument>
+        </arguments>
+    </type>
+</config>
