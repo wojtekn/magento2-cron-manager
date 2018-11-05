@@ -16,18 +16,114 @@ class CronManagerTest extends \PHPUnit_Framework_TestCase
      */
     private $objectManager;
 
+    /**
+     * @var \Wojtekn\CronManager\Model\CrontabManager
+     */
+    private $cronManager;
+
+    /**
+     * @var \Wojtekn\CronManager\Model\CrontabAdapter
+     */
+    private $cronAdapter;
+
     public function setUp()
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
+        $this->cronAdapter = $this->getMockBuilder('Wojtekn\CronManager\Model\CrontabAdapter')
+            ->disableOriginalConstructor()
+            ->setMethods(['load', 'save'])
+            ->getMock();
+
         $this->cronManager = $this->objectManager->getObject(
-            'Wojtekn\CronManager\Model\CrontabManager'
+            'Wojtekn\CronManager\Model\CrontabManager',
+            ['crontabAdapter' => $this->cronAdapter]
         );
     }
 
-    public function testValidate()
+    public function testValidateThrowsException()
     {
         $this->setExpectedException('\Exception', 'No crontab groups found. Check if crontab was prepared to use with the tool.');
         $this->cronManager->validate();
+    }
+
+    public function testOpensParsesCrontabAndEnablesSingleJob()
+    {
+        $this->cronAdapter->expects($this->once())->method('load')->willReturn(
+            "MAILTO=johndoe@example.com" . PHP_EOL .
+            "# [start:magento]" . PHP_EOL .
+            "#* * * * * php bin/magento cron:run" . PHP_EOL .
+            "# [end:magento]"
+        );
+        $this->cronManager->open();
+        $this->cronManager->enableJobs();
+
+        $this->assertEquals(1, $this->cronManager->getProcessedCount());
+    }
+
+    public function testOpensParsesCrontabAndDisablesSingleJob()
+    {
+        $this->cronAdapter->expects($this->once())->method('load')->willReturn(
+            "MAILTO=johndoe@example.com" . PHP_EOL .
+            "# [start:magento]" . PHP_EOL .
+            "* * * * * php bin/magento cron:run" . PHP_EOL .
+            "# [end:magento]"
+        );
+        $this->cronManager->open();
+        $this->cronManager->disableJobs();
+
+        $this->assertEquals(1, $this->cronManager->getProcessedCount());
+    }
+
+    public function testOpensParsesCrontabAndEnablesMultipleJobs()
+    {
+        $this->cronAdapter->expects($this->once())->method('load')->willReturn(
+            "MAILTO=johndoe@example.com" . PHP_EOL .
+            "# [start:magento]" . PHP_EOL .
+            "#* * * * * php bin/magento cron:run --group=index" . PHP_EOL .
+            "#* * * * * php bin/magento cron:run --group=mailchimp" . PHP_EOL .
+            "# [end:magento]"
+        );
+        $this->cronManager->open();
+        $this->cronManager->enableJobs();
+
+        $this->assertEquals(2, $this->cronManager->getProcessedCount());
+    }
+
+    public function testOpensParsesCrontabAndDisablesMultipleJobs()
+    {
+        $this->cronAdapter->expects($this->once())->method('load')->willReturn(
+            "MAILTO=johndoe@example.com" . PHP_EOL .
+            "# [start:magento]" . PHP_EOL .
+            "* * * * * php bin/magento cron:run --group=index" . PHP_EOL .
+            "* * * * * php bin/magento cron:run --group=mailchimp" . PHP_EOL .
+            "# [end:magento]"
+        );
+        $this->cronManager->open();
+        $this->cronManager->disableJobs();
+
+        $this->assertEquals(2, $this->cronManager->getProcessedCount());
+    }
+
+    public function testPreparesCrontabContentForWriting()
+    {
+        $this->cronAdapter->expects($this->once())->method('load')->willReturn(
+            "MAILTO=johndoe@example.com" . PHP_EOL .
+            "# [start:magento]" . PHP_EOL .
+            "* * * * * php bin/magento cron:run --group=index" . PHP_EOL .
+            "* * * * * php bin/magento cron:run --group=mailchimp" . PHP_EOL .
+            "# [end:magento]"
+        );
+        $this->cronManager->open();
+        $this->cronManager->disableJobs();
+
+        $this->assertEquals(
+            "MAILTO=johndoe@example.com" . PHP_EOL .
+            "# [start:magento]" . PHP_EOL .
+            "#* * * * * php bin/magento cron:run --group=index" . PHP_EOL .
+            "#* * * * * php bin/magento cron:run --group=mailchimp" . PHP_EOL .
+            "# [end:magento]",
+            $this->cronManager->prepareContent()
+        );
     }
 }

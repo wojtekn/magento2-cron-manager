@@ -27,7 +27,9 @@ class CronDisablerCommandTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->crontabManagerMock = $this->getMock('Wojtekn\CronManager\Model\CrontabManager');
+        $this->crontabManagerMock = $this->getMockBuilder(\Wojtekn\CronManager\Model\CrontabManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->command = $this->objectManager->getObject(
             'Wojtekn\CronManager\Console\Command\CronDisablerCommand',
             [

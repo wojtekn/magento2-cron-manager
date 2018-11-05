@@ -35,16 +35,6 @@ class CrontabManager
     const KEY_GROUP   = 'group';
 
     /**
-     * @var string Crontab path.
-     */
-    private $command = '/usr/bin/crontab';
-
-    /**
-     * @var string Temp file path.
-     */
-    private $tmpFile = '/tmp/crontab.txt';
-
-    /**
      * Parsed crontab lines.
      *
      * @var array
@@ -64,11 +54,25 @@ class CrontabManager
     private $processedCount = 0;
 
     /**
+     * @var \Wojtekn\CronManager\Model\CrontabAdapter
+     */
+    private $crontabAdapter;
+
+    /**
+     * CrontabManager constructor.
+     * @param CrontabAdapter $crontabAdapter
+     */
+    public function __construct(CrontabAdapter $crontabAdapter)
+    {
+        $this->crontabAdapter = $crontabAdapter;
+    }
+
+    /**
      * Reads and parses crontab entries.
      */
     public function open()
     {
-        $output = $this->execute($this->command . ' -l');
+        $output = $this->crontabAdapter->load();
 
         $this->lines = $this->parseCrontab($output);
     }
@@ -127,9 +131,7 @@ class CrontabManager
     public function save()
     {
         $fileContent = $this->prepareContent();
-        file_put_contents($this->tmpFile, $fileContent);
-        shell_exec($this->command . ' ' . $this->tmpFile);
-
+        $this->crontabAdapter->save($fileContent);
         return $this;
     }
 
@@ -203,23 +205,11 @@ class CrontabManager
      *
      * @return string
      */
-    private function prepareContent()
+    public function prepareContent()
     {
         return implode(
             PHP_EOL,
             array_column($this->lines, self::KEY_CONTENT)
         );
-    }
-
-    /**
-     * Executes command
-     *
-     * @param string $command Command to execute.
-     * @return null|string
-     */
-    private function execute($command)
-    {
-        $output = shell_exec($command);
-        return $output;
     }
 }
