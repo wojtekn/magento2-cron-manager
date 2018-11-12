@@ -38,12 +38,20 @@ class CronDisablerCommandTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testExecuteMultiple()
+    public function testExecuteMultipleDefaultGroup()
     {
         $this->crontabManagerMock->expects($this->exactly(2))->method('getProcessedCount')->willReturn(2);
         $commandTester = new CommandTester($this->command);
         $commandTester->execute([]);
-        $this->assertEquals("Disabled 2 jobs from default crontab group.\n", $commandTester->getDisplay());
+        $this->assertEquals("Disabled 2 jobs from 'magento' crontab group.\n", $commandTester->getDisplay());
+    }
+
+    public function testExecuteMultipleCustomGroup()
+    {
+        $this->crontabManagerMock->expects($this->exactly(2))->method('getProcessedCount')->willReturn(2);
+        $commandTester = new CommandTester($this->command);
+        $commandTester->execute(['--group' => 'custom-group']);
+        $this->assertEquals("Disabled 2 jobs from 'custom-group' crontab group.\n", $commandTester->getDisplay());
     }
 
     public function testExecuteNothing()

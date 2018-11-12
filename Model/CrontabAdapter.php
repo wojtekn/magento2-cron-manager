@@ -20,12 +20,30 @@ class CrontabAdapter
     /**
      * @var string Temp file path.
      */
-    private $tmpFile = '/tmp/crontab.txt';
+    private $tmpFile = '';
 
     /**
      * @var string Crontab path.
      */
     private $command = '/usr/bin/crontab';
+
+    /**
+     * CrontabAdapter constructor.
+     */
+    public function __construct()
+    {
+        $this->tmpFile = $this->getDefaultTmpFilePath();
+    }
+
+    /**
+     * Remove temp file.
+     */
+    public function __destruct()
+    {
+        if (file_exists($this->tmpFile)) {
+            unlink($this->tmpFile);
+        }
+    }
 
     /**
      * Load crontab content
@@ -44,7 +62,27 @@ class CrontabAdapter
     public function save($fileContent)
     {
         file_put_contents($this->tmpFile, $fileContent);
-        return $this->execute($this->command . ' ' . $tmpFile);
+        return $this->execute($this->command . ' ' . $this->tmpFile);
+    }
+
+    /**
+     * Get path to file which is used to store crontab content for saving purpose.
+     *
+     * @return bool|string
+     */
+    public function getTmpFilePath()
+    {
+        return $this->tmpFile;
+    }
+
+    /**
+     * Set path to file which is used to store crontab content for saving purpose.
+     *
+     * @param $tmpFile
+     */
+    public function setTmpFilePath($tmpFile)
+    {
+        $this->tmpFile = $tmpFile;
     }
 
     /**
@@ -57,5 +95,15 @@ class CrontabAdapter
     {
         $output = shell_exec($command);
         return $output;
+    }
+
+    /**
+     * Generate temp file.
+     *
+     * @return bool|string
+     */
+    private function getDefaultTmpFilePath()
+    {
+        return tempnam(sys_get_temp_dir(), 'CRONTAB-MANAGER');
     }
 }

@@ -25,8 +25,8 @@ class CrontabManager
     /**
      * Start and end tags
      */
-    const TAG_START = '[start:magento]';
-    const TAG_END = '[end:magento]';
+    const TAG_START = '/\[start\:(.*?)\]/';
+    const TAG_END = '/\[end\:(.*?)\]/';
 
     /**
      * Job record keys
@@ -130,8 +130,13 @@ class CrontabManager
      */
     public function save()
     {
+        if (!$this->getProcessedCount()) {
+            return $this;
+        }
+
         $fileContent = $this->prepareContent();
         $this->crontabAdapter->save($fileContent);
+
         return $this;
     }
 
@@ -172,17 +177,17 @@ class CrontabManager
         $currentGroup = null;
 
         foreach ($output as $line) {
-            if (strpos($line, self::TAG_START) !== false) {
+            if (preg_match(self::TAG_START, $line, $matches) == 1) {
                 $lines[] = [
                     self::KEY_CONTENT => trim($line),
                     self::KEY_GROUP => null,
                 ];
-                $currentGroup = self::DEFAULT_CRONTAB_GROUP;
+                $currentGroup = $matches[1];
                 $this->groups[] = $currentGroup;
                 continue;
             }
 
-            if (strpos($line, self::TAG_END) !== false) {
+            if (preg_match(self::TAG_END, $line, $matches) == 1) {
                 $lines[] = [
                     self::KEY_CONTENT => trim($line),
                     self::KEY_GROUP => null,

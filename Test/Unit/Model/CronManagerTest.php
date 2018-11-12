@@ -90,6 +90,21 @@ class CronManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(2, $this->cronManager->getProcessedCount());
     }
 
+    public function testOpensParsesCrontabAndEnablesMultipleJobsFromCustomGroup()
+    {
+        $this->cronAdapter->expects($this->once())->method('load')->willReturn(
+            "MAILTO=johndoe@example.com" . PHP_EOL .
+            "# [start:my-group]" . PHP_EOL .
+            "#* * * * * php bin/magento cron:run --group=index" . PHP_EOL .
+            "#* * * * * php bin/magento cron:run --group=mailchimp" . PHP_EOL .
+            "# [end:my-group]"
+        );
+        $this->cronManager->open();
+        $this->cronManager->enableJobs('my-group');
+
+        $this->assertEquals(2, $this->cronManager->getProcessedCount());
+    }
+
     public function testOpensParsesCrontabAndDisablesMultipleJobs()
     {
         $this->cronAdapter->expects($this->once())->method('load')->willReturn(
@@ -101,6 +116,21 @@ class CronManagerTest extends \PHPUnit_Framework_TestCase
         );
         $this->cronManager->open();
         $this->cronManager->disableJobs();
+
+        $this->assertEquals(2, $this->cronManager->getProcessedCount());
+    }
+
+    public function testOpensParsesCrontabAndDisablesMultipleJobsFromCustomGroup()
+    {
+        $this->cronAdapter->expects($this->once())->method('load')->willReturn(
+            "MAILTO=johndoe@example.com" . PHP_EOL .
+            "# [start:my-group]" . PHP_EOL .
+            "* * * * * php bin/magento cron:run --group=index" . PHP_EOL .
+            "* * * * * php bin/magento cron:run --group=mailchimp" . PHP_EOL .
+            "# [end:my-group]"
+        );
+        $this->cronManager->open();
+        $this->cronManager->disableJobs('my-group');
 
         $this->assertEquals(2, $this->cronManager->getProcessedCount());
     }
