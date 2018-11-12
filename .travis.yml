@@ -9,8 +9,6 @@ env:
 cache:
   apt: true
   directories: $HOME/.composer/cache
-before_install: ./dev/travis/before_install.sh
 install: composer install --no-interaction --prefer-dist
-before_script: ./dev/travis/before_script.sh
 script: 
   - phpunit vendor/wojtekn/magento2-cron-manager/Test
