@@ -2,9 +2,9 @@
 /**
  * Crontab disabler command tests
  *
- * @package Wojtekn\CronManager
- * @author Wojtek Naruniec <wojtek@naruniec.me>
+ * @author    Wojtek Naruniec <wojtek@naruniec.me>
  * @copyright Wojtek Naruniec (c) 2018
+ * @package   Wojtekn\CronManager
  */
 
 namespace Wojtekn\CronManager\Test\Unit\Console\Command;
@@ -12,6 +12,9 @@ namespace Wojtekn\CronManager\Test\Unit\Console\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Wojtekn\CronManager\Console\Command\CronDisablerCommand;
 
+/**
+ * Class CronDisablerCommandTest
+ */
 class CronDisablerCommandTest extends \PHPUnit_Framework_TestCase
 {
     /**

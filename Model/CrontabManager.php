@@ -2,18 +2,15 @@
 /**
  * Simple crontab manager
  *
- * @package Wojtekn\CronManager
- * @author Wojtek Naruniec <wojtek@naruniec.me>
+ * @author    Wojtek Naruniec <wojtek@naruniec.me>
  * @copyright Wojtek Naruniec (c) 2018
+ * @package   Wojtekn\CronManager
  */
 
 namespace Wojtekn\CronManager\Model;
 
 /**
  * Class CrontabManager
- *
- * @package Wojtekn\CronManager
- * @author Wojtek Naruniec <wojtek@naruniec.me>
  */
 class CrontabManager
 {
@@ -143,7 +140,7 @@ class CrontabManager
     /**
      * Returns count of processed items.
      *
-     * @return int
+     * @return integer
      */
     public function getProcessedCount()
     {

@@ -2,13 +2,16 @@
 /**
  * Crontab manager tests
  *
- * @package Wojtekn\CronManager
- * @author Wojtek Naruniec <wojtek@naruniec.me>
+ * @author    Wojtek Naruniec <wojtek@naruniec.me>
  * @copyright Wojtek Naruniec (c) 2018
+ * @package   Wojtekn\CronManager
  */
 
 namespace Wojtekn\CronManager\Test\Unit\Model;
 
+/**
+ * Class CronManagerTest
+ */
 class CronManagerTest extends \PHPUnit_Framework_TestCase
 {
     /**

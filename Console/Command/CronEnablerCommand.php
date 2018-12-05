@@ -2,9 +2,9 @@
 /**
  * Command which enables crontab entries.
  *
- * @package Wojtekn\CronManager
- * @author Wojtek Naruniec <wojtek@naruniec.me>
+ * @author    Wojtek Naruniec <wojtek@naruniec.me>
  * @copyright Wojtek Naruniec (c) 2018
+ * @package   Wojtekn\CronManager
  */
 
 namespace Wojtekn\CronManager\Console\Command;
@@ -17,9 +17,6 @@ use Wojtekn\CronManager\Model\CrontabManager;
 
 /**
  * Class CronEnablerCommand
- *
- * @package Wojtekn\CronManager
- * @author Wojtek Naruniec <wojtek@naruniec.me>
  */
 class CronEnablerCommand extends Command
 {
@@ -70,7 +67,7 @@ class CronEnablerCommand extends Command
      *
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int|null|void
+     * @return integer|null|void
      * @throws \Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -82,7 +79,9 @@ class CronEnablerCommand extends Command
         $this->crontabManager->save();
 
         if ($this->crontabManager->getProcessedCount()) {
-            $output->writeln("<info>Enabled {$this->crontabManager->getProcessedCount()} jobs from '{$group}' crontab group.<info>");
+            $output->writeln(
+                "<info>Enabled {$this->crontabManager->getProcessedCount()} jobs from '{$group}' crontab group.<info>"
+            );
         } else {
             $output->writeln("<info>Nothing to enable.<info>");
         }

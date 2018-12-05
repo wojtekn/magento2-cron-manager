@@ -2,9 +2,9 @@
 /**
  * Command which disables crontab entries.
  *
- * @package Wojtekn\CronManager
- * @author Wojtek Naruniec <wojtek@naruniec.me>
+ * @author    Wojtek Naruniec <wojtek@naruniec.me>
  * @copyright Wojtek Naruniec (c) 2018
+ * @package   Wojtekn\CronManager
  */
 
 namespace Wojtekn\CronManager\Console\Command;
@@ -17,9 +17,6 @@ use Wojtekn\CronManager\Model\CrontabManager;
 
 /**
  * Class CronDisablerCommand
- *
- * @package Wojtekn\CronManager
- * @author Wojtek Naruniec <wojtek@naruniec.me>
  */
 class CronDisablerCommand extends Command
 {
@@ -70,7 +67,7 @@ class CronDisablerCommand extends Command
      *
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int|null|void
+     * @return integer|null|void
      * @throws \Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output)
